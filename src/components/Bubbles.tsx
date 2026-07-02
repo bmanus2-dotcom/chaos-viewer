@@ -46,8 +46,8 @@ export function Bubbles({ count = 14 }: { count?: number }) {
       const el = document.createElement('div')
       el.className = 'aero-bubble'
       const b: Bubble = { el, r: 20, x: 0, y: 0, rise: 15, swayAmp: 30, swaySpeed: 0.25, swayPhase: 0, pushX: 0, pushY: 0, popped: false }
-      // pop on a click ANYWHERE on the bubble (pointerdown covers the whole disc)
-      el.addEventListener('pointerdown', e => { e.preventDefault(); pop(b) })
+      // no DOM click handler: bubbles sit behind the UI, so we hit-test the cursor
+      // against each bubble in the animation loop and pop on hover-over.
       host.appendChild(el)
       reset(b, false)
       return b
@@ -79,27 +79,19 @@ export function Bubbles({ count = 14 }: { count?: number }) {
         // steady rise + smooth sinusoidal sway (the "wind")
         b.y -= b.rise * dt
         const swayX = b.swayAmp * Math.sin(now * 0.001 * b.swaySpeed + b.swayPhase)
+        const cx = b.x + swayX
+        const cy = b.y
 
-        // soft cursor repulsion: nudge a push offset that eases back to zero
-        const cx = b.x + swayX + b.pushX
-        const cy = b.y + b.pushY
+        // pop when the cursor passes OVER the bubble - a manual hit-test against
+        // the mouse position, so it works even though the bubble sits behind the UI
         const dx = cx - mouse.x, dy = cy - mouse.y
-        const reach = 130 + b.r
-        const d2 = dx * dx + dy * dy
-        if (d2 < reach * reach && d2 > 1) {
-          const d = Math.sqrt(d2)
-          const f = (1 - d / reach) * 26 * dt      // gentle, framerate-independent
-          b.pushX += (dx / d) * f
-          b.pushY += (dy / d) * f
-        }
-        b.pushX *= 0.92
-        b.pushY *= 0.92
+        if (dx * dx + dy * dy < b.r * b.r) { pop(b); continue }
 
         if (b.y < -b.r * 2 - 20) reset(b, true)     // recycle at the top
 
         // position via left/top so the pop keyframe's transform:scale runs in place
-        b.el.style.left = `${b.x + swayX + b.pushX - b.r}px`
-        b.el.style.top = `${b.y + b.pushY - b.r}px`
+        b.el.style.left = `${cx - b.r}px`
+        b.el.style.top = `${cy - b.r}px`
         if (b.x < -60) b.x = W + 60
         else if (b.x > W + 60) b.x = -60
       }
