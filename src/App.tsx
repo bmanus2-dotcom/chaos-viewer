@@ -139,6 +139,7 @@ const AUTHOR_URL = 'https://github.com/bmanus2-dotcom'
 // featured example atlases, loaded via ?data= (hosted alongside the app)
 const EXAMPLES: { label: string; data: string }[] = [
   { label: 'sm64ds-decomp', data: 'https://raw.githubusercontent.com/bmanus2-dotcom/chaos-viewer/example-data/sm64ds/chaos-db.json' },
+  { label: 'banjo-kazooie', data: 'https://raw.githubusercontent.com/bmanus2-dotcom/chaos-viewer/example-data/banjo/chaos-db.json' },
 ]
 
 // EDIT ME: little confirmation phrases shown on the Copy button + floating bubble
