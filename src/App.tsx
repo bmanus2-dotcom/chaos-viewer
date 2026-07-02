@@ -501,8 +501,8 @@ function App() {
       <Bubbles />
       <SetupModal open={setupOpen} onClose={() => setSetupOpen(false)} />
 
-      <div className="relative z-10 w-full max-w-[1900px] mx-auto px-4 sm:px-6 xl:px-10 py-6 xl:py-8">
-        <header className="mb-6 flex items-end justify-between select-none">
+      <div className="relative z-10 w-full max-w-[1900px] mx-auto px-4 sm:px-6 xl:px-10 py-6 xl:py-8 select-none pointer-events-none">
+        <header className="mb-6 flex items-end justify-between select-none pointer-events-auto">
           <div>
             <div className="flex items-center gap-3">
               <PopLogo />
@@ -547,7 +547,7 @@ function App() {
           </div>
         </header>
 
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-4 pointer-events-auto">
           {/* Sidebar */}
           <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 aero-panel p-3 overflow-hidden flex flex-col" style={{ minHeight: '420px', maxHeight: '80vh' }}>
             <div className="px-2 pb-2 flex items-center gap-2 border-b border-white/70 mb-1">
@@ -824,7 +824,7 @@ function App() {
           </div>
         </div>
 
-        <footer className="mt-8 text-[10px] text-aero-muted/50 text-center">
+        <footer className="mt-8 pointer-events-auto text-[10px] text-aero-muted/50 text-center">
           Chaos Viewer • data from sm64ds-decomp tools (modules/sweep/ledger/coddog/nearmiss) + live claims • inspired by Mizuchi Decomp Atlas
         </footer>
       </div>
