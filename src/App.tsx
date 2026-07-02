@@ -573,7 +573,7 @@ function App() {
       }
     }
     return m
-  }, [claims])
+  }, [claims, db])
 
   const q = search.toLowerCase()
   const filtered = db.functions.filter(f =>
@@ -585,8 +585,8 @@ function App() {
 
   const visible = filtered.filter(f => !(hideMatched && f.matched) && !(hideUnmatched && !f.matched))
 
-  const byName = useMemo(() => new Map(db.functions.map(f => [f.name, f])), [])
-  const byId = useMemo(() => new Map(db.functions.map(f => [f.id, f])), [])
+  const byName = useMemo(() => new Map(db.functions.map(f => [f.name, f])), [db])
+  const byId = useMemo(() => new Map(db.functions.map(f => [f.id, f])), [db])
   const selectedFn = selectedId ? byId.get(selectedId) ?? null : null
 
   // ---- module list with sort ----------------------------------------------
@@ -600,7 +600,7 @@ function App() {
       m.set(f.module, s)
     }
     return m
-  }, [])
+  }, [db])
 
   const modules = useMemo(() => {
     const mods = Array.from(moduleStats.keys())
