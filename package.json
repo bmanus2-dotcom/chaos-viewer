@@ -2,7 +2,7 @@
   "name": "chaos-viewer",
   "version": "0.1.0",
   "private": true,
-  "description": "Frutiger Aero themed decomp viewer for sm64ds-decomp, inspired by Mizuchi Decomp Atlas. Browse functions, interactive treemap, prioritize next targets, and generate prompts.",
+  "description": "Decomp progress atlas: browse functions, interactive treemap, prioritize next targets, and generate matching prompts. Point it at any decomp project that publishes its data. Inspired by Mizuchi Decomp Atlas.",
   "type": "module",
   "scripts": {
     "dev": "vite",

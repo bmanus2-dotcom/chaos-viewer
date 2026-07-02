@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Chaos Viewer - Frutiger Aero with a live theme engine.
+/* Chaos Viewer - glossy themes with a live theme engine.
    Every token exists twice: an rgb TRIPLET (for tailwind /opacity) and a hex
    convenience var (for inline SVG/styles). Themes swap both. */
 :root, html[data-theme='aero'] {
