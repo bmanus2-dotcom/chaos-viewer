@@ -81,12 +81,12 @@ const BATCH_MAX = 16
 // EDIT ME: little confirmation phrases shown on the Copy button + floating bubble
 // (one is picked at random each press). Add your own.
 const COPY_PHRASES = [
-  'Prompt Copied!',
-  'Off you go!',
-  'Go get that function!',
-  'Snagged it!',
-  'Copied - good luck!',
-  'Order from chaos!',
+  "Let's Tango!",
+  'Good luck!',
+  'Godspeed!',
+  'You bring order to chaos.',
+  'Taste divine fury!',
+  'Very well, then.',
 ]
 
 function fillTemplate(t: string, fn: ChaosFunction) {
