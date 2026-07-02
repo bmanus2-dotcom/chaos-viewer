@@ -299,7 +299,7 @@ function Pill({ name, onClick }: { name: string; onClick?: () => void }) {
 
 
 const THEMES: { id: string; label: string; swatch: string }[] = [
-  { id: 'aero', label: 'Frutiger Aero', swatch: 'linear-gradient(135deg,#7cc4f2,#8ec841)' },
+  { id: 'aero', label: 'Aqua', swatch: 'linear-gradient(135deg,#7cc4f2,#8ec841)' },
   { id: 'sunset', label: 'Sunset', swatch: 'linear-gradient(135deg,#ffd9a0,#a86bc9)' },
   { id: 'deepsea', label: 'Deep Sea', swatch: 'linear-gradient(135deg,#0b3350,#24d3ee)' },
   { id: 'bubblegum', label: 'Bubblegum', swatch: 'linear-gradient(135deg,#ffd6ec,#c3b1f7)' },

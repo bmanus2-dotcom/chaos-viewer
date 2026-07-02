@@ -13,7 +13,7 @@ interface Bubble {
   popped: boolean    // hidden / waiting to respawn
 }
 
-/** Interactive Frutiger Aero bubble field: bubbles rise on a gentle wind, sway
+/** Interactive glossy bubble field: bubbles rise on a gentle wind, sway
  *  left-right, pop when the cursor passes over them (works even behind the UI),
  *  and respawn from below. A fraction can wear a contributor's avatar. */
 export function Bubbles({ count = 14, avatars = [] }: { count?: number; avatars?: string[] }) {
