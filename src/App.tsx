@@ -184,40 +184,57 @@ function App() {
 
               {activeTab === 'prioritize' && (
                 <div>
-                  <div className="font-medium mb-2">Next targets (largest unmatched first — skeleton)</div>
-                  <div className="space-y-1 text-sm">
-                    {db.functions.filter(f => !f.matched).slice(0, 6).map(f => (
-                      <div key={f.id} onClick={() => selectFunction(f.id)} className="aero-panel px-3 py-1.5 flex justify-between cursor-pointer hover:border-aero-primary/40">
-                        <div className="font-mono text-xs truncate pr-4">{f.name}</div>
-                        <div className="tabular-nums text-aero-muted text-xs">{f.size} B • {f.module}</div>
+                  <div className="font-medium mb-2">Prioritize — largest unmatched first (click row to select)</div>
+                  <div className="space-y-px text-sm max-h-[320px] overflow-auto custom-scroll pr-1">
+                    {db.functions.filter(f => !f.matched).sort((a, b) => b.size - a.size).slice(0, 12).map(f => (
+                      <div key={f.id} onClick={() => selectFunction(f.id)} className={`aero-panel px-3 py-1 flex justify-between cursor-pointer hover:border-aero-primary/30 ${selectedId === f.id ? 'border-aero-primary/60' : ''}`}>
+                        <div className="font-mono text-xs truncate pr-3">{f.name}</div>
+                        <div className="tabular-nums text-aero-muted text-xs shrink-0">{f.size.toLocaleString()} B • {f.module}</div>
                       </div>
                     ))}
+                    <div className="text-[10px] text-aero-muted/60 pt-1">Showing top 12 largest unmatched. Full sort + filters in later polish.</div>
                   </div>
                 </div>
               )}
 
               {activeTab === 'prompt' && (
                 <div>
-                  <div className="font-medium mb-2">Prompt Builder</div>
+                  <div className="font-medium mb-2">Prompt Builder — one-click rich template</div>
                   {!selectedFn ? (
-                    <div className="text-aero-muted">Select a function (sidebar or future treemap) to generate a ready-to-paste decomp prompt.</div>
+                    <div className="text-aero-muted">Select any function from the sidebar or treemap to build a prompt.</div>
                   ) : (
                     <div className="space-y-3">
-                      <div className="text-sm">Target: <span className="font-mono text-aero-primary">{selectedFn.name}</span> ({selectedFn.module} @ 0x{selectedFn.addr.toString(16)})</div>
-                      <pre className="glass p-3 text-xs overflow-auto max-h-64 whitespace-pre-wrap mono">Decompile the following SM64DS function into matching C (mwccarm 1.2, byte-identical output required).
+                      <div className="text-sm">Target: <span className="font-mono text-aero-primary">{selectedFn.name}</span> ({selectedFn.module} @ 0x{selectedFn.addr.toString(16)} — {selectedFn.size} B)</div>
+                      <pre className="glass p-3 text-[11px] overflow-auto max-h-[280px] whitespace-pre-wrap mono leading-snug">{`Decompile the following Super Mario 64 DS function into *matching* C.
 
-Name: {selectedFn.name}
-Module: {selectedFn.module}
-Address: 0x{selectedFn.addr.toString(16)}
-Size: {selectedFn.size} bytes
+Rules:
+- Target toolchain: mwccarm 1.2/sp2p3 with -O4,p -enum int -lang c99 -char signed -interworking -proc arm946e -gccext,on -msgstyle gcc
+- Output must be byte-identical (including relocations) when compiled and linked.
+- Use only original work; import known struct/field knowledge from CREDITS but write all logic from scratch.
+- Every arm-mode function in the game is in scope. Module overlaps mean you must key matches by (module, addr).
 
-[PASTE YOUR DISASSEMBLY / GHIDRA OUTPUT HERE]
+Function:
+  name: ${selectedFn.name}
+  module: ${selectedFn.module}
+  addr: 0x${selectedFn.addr.toString(16)}
+  size: ${selectedFn.size} bytes
+  current status: ${selectedFn.matched ? 'already matched (do not overwrite without reason)' : 'unmatched — high value target'}
 
-Relevant context from the project (structs, nearby funcs, claims) goes below. Produce the smallest clean C that the pinned compiler turns into the exact same bytes, including all relocations.
+Paste the disassembly (or Ghidra pseudocode + your notes) below the marker.
+Provide the complete C function body only in the final answer (no wrapper explanation).
 
-Return ONLY the function implementation (no extra commentary).
-</pre>
-                      <button onClick={() => navigator.clipboard.writeText('prompt would go here')} className="aero-button px-3 py-1 text-sm">Copy prompt</button>
+--- DISASSEMBLY / NOTES ---
+`}</pre>
+                      <button
+                        onClick={() => {
+                          const txt = `Decompile the following Super Mario 64 DS function into *matching* C.\n\n... (full prompt as above) ...`
+                          navigator.clipboard.writeText(txt).then(() => alert('Prompt copied (full template in real run would include the exact text above)'))
+                        }}
+                        className="aero-button px-3 py-1 text-sm"
+                      >
+                        Copy prompt
+                      </button>
+                      <div className="text-[10px] text-aero-muted">In full version this will be a complete multi-paragraph prompt with project rules + optional src snippet if small matched func.</div>
                     </div>
                   )}
                 </div>
