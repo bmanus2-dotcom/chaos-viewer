@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { squarify } from '../lib/squarify'
 
 export interface TreemapFunc {
@@ -14,7 +14,6 @@ interface TreemapProps {
   selectedId: string | null
   selectedPath: string | null
   onSelect: (id: string) => void
-  width?: number
   height?: number
 }
 
@@ -34,13 +33,23 @@ interface LayoutRect {
 const PAD = 3
 const LABEL_H = 18
 const INNER = 2
-const CANVAS_W = 1200
-const CANVAS_H = 620
 
-export function Treemap({ functions, selectedId, selectedPath, onSelect, width = CANVAS_W, height = CANVAS_H }: TreemapProps) {
+export function Treemap({ functions, selectedId, selectedPath, onSelect, height = 460 }: TreemapProps) {
+  // fill the parent: measure it and lay out in real pixels (no letterboxing)
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(1080)
+  useLayoutEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    const ro = new ResizeObserver(entries => {
+      const w = Math.floor(entries[0].contentRect.width)
+      if (w > 0) setWidth(w)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
-  const { rects } = useMemo(() => {
-    // Group by module (like gather + squarify in treemap.py)
+  const rects = useMemo(() => {
     const byMod = new Map<string, TreemapFunc[]>()
     for (const f of functions) {
       if (!byMod.has(f.module)) byMod.set(f.module, [])
@@ -53,11 +62,10 @@ export function Treemap({ functions, selectedId, selectedPath, onSelect, width =
       return { label, recs, bytes, doneBytes }
     }).filter(m => m.bytes > 0)
 
-    if (!mods.length) return { rects: [] as LayoutRect[], viewW: width, viewH: height }
+    if (!mods.length) return [] as LayoutRect[]
 
     const modItems = mods.map(m => ({ value: m.bytes, mod: m }))
-
-    const modBoxes = squarify(modItems, 0, 0, CANVAS_W, CANVAS_H)
+    const modBoxes = squarify(modItems, 0, 0, width, height)
 
     const out: LayoutRect[] = []
 
@@ -71,7 +79,6 @@ export function Treemap({ functions, selectedId, selectedPath, onSelect, width =
 
       const pct = m.bytes ? (m.doneBytes / m.bytes) * 100 : 0
 
-      // module region bg
       out.push({
         id: `mod:${m.label}`,
         name: m.label,
@@ -104,27 +111,39 @@ export function Treemap({ functions, selectedId, selectedPath, onSelect, width =
       }
     }
 
-    return { rects: out, viewW: CANVAS_W, viewH: CANVAS_H }
-  }, [functions])
+    return out
+  }, [functions, width, height])
 
   return (
-    <div className="relative select-none" style={{ width, height }}>
+    <div ref={wrapRef} className="relative select-none w-full" style={{ height }}>
       <svg
-        viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
+        viewBox={`0 0 ${width} ${height}`}
         width={width}
         height={height}
-        className="block rounded-xl border border-white/10 bg-black/40"
+        className="block rounded-xl"
+        style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.15))', border: '1px solid rgba(255,255,255,0.8)' }}
       >
+        <defs>
+          <linearGradient id="tm-matched" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#71dd8a" />
+            <stop offset="45%" stopColor="#3fc45f" />
+            <stop offset="100%" stopColor="#2fae4e" />
+          </linearGradient>
+          <linearGradient id="tm-unmatched" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#c3d4e3" />
+            <stop offset="100%" stopColor="#9fb4c8" />
+          </linearGradient>
+        </defs>
         {rects.map((r, idx) => {
           const isSel = r.id === selectedId
           const isDim = selectedPath ? !r.id.startsWith(`mod:${selectedPath}`) && !r.id.includes(selectedPath) : false
 
-          let fill = r.matched ? 'var(--aero-matched)' : 'var(--aero-unmatched)'
-          if (r.isModuleLabel) fill = '#111827'
-          if (isDim) fill = r.isModuleLabel ? '#0b1320' : '#1f2937'
+          let fill = r.matched ? 'url(#tm-matched)' : 'url(#tm-unmatched)'
+          if (r.isModuleLabel) fill = 'rgba(255,255,255,0.4)'
+          if (isDim) fill = r.isModuleLabel ? 'rgba(255,255,255,0.2)' : 'rgba(190,205,220,0.45)'
 
-          const stroke = isSel ? 'var(--aero-primary)' : (r.isModuleLabel ? '#334155' : (r.matched ? '#166534' : '#334155'))
-          const sw = isSel ? 2.5 : (r.isModuleLabel ? 1 : 0.6)
+          const stroke = isSel ? 'var(--aero-primary)' : (r.isModuleLabel ? 'rgba(255,255,255,0.9)' : (r.matched ? '#2a9b46' : '#8fa6bb'))
+          const sw = isSel ? 2.5 : (r.isModuleLabel ? 1 : 0.5)
 
           return (
             <g key={idx}>
@@ -136,18 +155,18 @@ export function Treemap({ functions, selectedId, selectedPath, onSelect, width =
                 fill={fill}
                 stroke={stroke}
                 strokeWidth={sw}
-                rx={r.isModuleLabel ? 2 : 0.5}
+                rx={r.isModuleLabel ? 4 : 1}
                 onClick={() => { if (!r.isModuleLabel) onSelect(r.id) }}
                 className={r.isModuleLabel ? '' : 'cursor-pointer'}
                 style={{ transition: 'fill 120ms, stroke 120ms' }}
               />
               {r.isModuleLabel && r.moduleLabel && r.h > LABEL_H + 4 && r.w > 36 && (
                 <text
-                  x={r.x + 4}
+                  x={r.x + 5}
                   y={r.y + 13}
                   fontSize={10.5}
-                  fill="#cbd5e1"
-                  fontFamily="system-ui, Segoe UI, sans-serif"
+                  fill="#0d3a5c"
+                  fontFamily="'Segoe UI', system-ui, sans-serif"
                   fontWeight={600}
                   pointerEvents="none"
                 >
@@ -155,23 +174,22 @@ export function Treemap({ functions, selectedId, selectedPath, onSelect, width =
                 </text>
               )}
               {!r.isModuleLabel && (r.h > 9 && r.w > 18) && (
-                <title>{r.name} — {r.matched ? 'matched' : 'unmatched'} ({Math.round(r.w * r.h)} area)</title>
+                <title>{r.name} — {r.matched ? 'matched' : 'unmatched'}</title>
               )}
             </g>
           )
         })}
       </svg>
 
-      {/* minimal legend + controls overlay (aero style) */}
-      <div className="absolute top-2 left-2 glass px-2.5 py-1.5 rounded-lg text-[11px] flex items-center gap-3 pointer-events-none">
-        <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{background:'var(--aero-matched)'}} /> matched</span>
-        <span className="flex items-center gap-1"><span className="inline-block w-2 h-2 rounded" style={{background:'var(--aero-unmatched)'}} /> unmatched</span>
+      <div className="absolute top-2 left-2 glass px-2.5 py-1.5 text-[11px] flex items-center gap-3 pointer-events-none">
+        <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{background:'linear-gradient(180deg,#71dd8a,#2fae4e)', border:'1px solid rgba(255,255,255,0.9)'}} /> matched</span>
+        <span className="flex items-center gap-1"><span className="inline-block w-2.5 h-2.5 rounded-full" style={{background:'linear-gradient(180deg,#c3d4e3,#9fb4c8)', border:'1px solid rgba(255,255,255,0.9)'}} /> unmatched</span>
       </div>
 
       {selectedId && (
         <button
           onClick={() => onSelect('__clear__')}
-          className="absolute top-2 right-2 glass px-2 py-0.5 text-xs rounded hover:bg-white/10"
+          className="absolute top-2 right-2 glass px-2.5 py-0.5 text-xs hover:brightness-105"
         >
           clear
         </button>
