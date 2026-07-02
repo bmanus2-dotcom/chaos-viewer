@@ -1,67 +1,70 @@
 # Chaos Viewer
 
-Frutiger Aero themed decomp viewer for https://github.com/bmanus2-dotcom/sm64ds-decomp.
+An interactive progress atlas for matching-decompilation projects. Browse every function
+as a treemap, find the best functions to work on next, and copy a complete, ready-to-paste
+AI prompt for any of them.
 
-Inspired directly by the Decomp Atlas UI from https://github.com/macabeus/mizuchi.
+Hosted: **https://bmanus2-dotcom.github.io/chaos-viewer/**
 
-- Interactive squarified treemap (exact same layout math as the project's README progress SVG)
-- Module sidebar + live search/filter that syncs across views
-- Prioritize tab with three modes: Nearly done (near-miss drafts by divergence), Best
-  scaffolded (closest matched opcode twin via coddog), Biggest bytes (floors excluded)
-- Mizuchi-style function details: status badges, clickable caller/callee pills, the
-  closest matched twin, annotated disassembly, and the stored near-miss draft
-- Prompt Builder emits a COMPLETE ready-to-paste task: repo setup, compiler flags, the
-  verify command, pointers to the codegen levers, the sibling scaffold, the annotated
-  disassembly, and the near-miss draft when one exists (start 1-6 instructions from done)
-- Data pipeline: scripts/generate-chaos-db.py reads the decomp's own tools
-  (modules/sweep/ledger/coddog/nearmiss) -> lean 1.8MB index + 73 per-module lazy detail
-  chunks under public/details/ (no ROM bytes, disassembly text only)
-- Glassmorphism + aero palette (cyan #00AEEF + lime #7FC400 + gloss) derived from the maintainer's GitHub avatar + classic Frutiger Aero references
+## What it does
 
-## Quick start (for contributors / viewers)
+- **Treemap** of every function, sized by bytes, green = matched / gray = unmatched.
+- **Search + module browser** with hide-matched / hide-unmatched toggles.
+- **Prioritize** tab, three ways to pick your next target: *Nearly done* (stored near-miss
+  drafts, fewest instructions off), *Best scaffolded* (closest already-matched twin), and
+  *Biggest bytes*.
+- **Function details**: callers/callees, annotated disassembly, and the stored near-miss draft.
+- **Prompt Builder**: one click copies a full matching task (setup, compiler flags, the verify
+  command, the closest scaffold, the disassembly, and the near-miss draft when one exists) that
+  tells the AI to open a PR back to your repo. Queue several functions into one batch prompt.
+
+## Use it for your own decomp
+
+You don't host anything — use the hosted viewer above and point it at your project's data.
+
+1. **Generate your data file.** Use `scripts/generate-chaos-db.py` (the reference generator,
+   which reads a decomp's own tooling) or any script that emits the schema in
+   [`ADAPTING.md`](ADAPTING.md). It writes `data/chaos-db.json` plus per-module
+   `details/*.json` chunks. No ROM or extracted assets are included, only disassembly text.
+2. **Commit them to your repo** on the default branch, e.g. `data/chaos-db.json` and
+   `data/details/`. (Any CORS-reachable location works; committing to the repo is simplest.)
+3. **Open the viewer and enter your repo URL.** It finds your published data automatically.
+   Or share a direct link that's already set up:
+   `https://bmanus2-dotcom.github.io/chaos-viewer/?data=<raw-url-to-your-chaos-db.json>`
+
+If a repo has no published data file, the viewer stays on the setup screen and tells you to
+generate one — it won't load someone else's data by mistake.
+
+## The config file
+
+Your project's branding, compiler line, verify command, and links come from a
+`project.config.json` that the generator embeds into your `chaos-db.json`. Copy
+[`project.config.example.json`](project.config.example.json) and fill it in:
+
+```jsonc
+{
+  "name": "your-decomp",
+  "github": "https://github.com/you/your-decomp",
+  "compiler": "your compiler + exact flags (shown to the AI)",
+  "setup": "clone {github} and follow CONTRIBUTING.md ...",
+  "verifyCommand": "python tools/verify.py --func {name} --addr 0x{addrHex} --size 0x{sizeHex}",
+  "readFirst": "docs a contributor should read first",
+  "rules": "any legal / originality rules",
+  "discord": "optional; auto-detected from your README if present"
+}
+```
+
+Placeholders in `verifyCommand`: `{name} {module} {addr} {addrHex} {size} {sizeHex} {github}`.
+
+## Run / regenerate locally (optional)
 
 ```bash
 npm install
-npm run dev
+npm run dev            # http://localhost:5173
+# regenerate data from a decomp checkout:
+python scripts/generate-chaos-db.py --repo /path/to/your-decomp
 ```
-
-Open http://localhost:5173
-
-To update the data after new matches land in sm64ds-decomp:
-
-```bash
-# from a fresh sm64ds-decomp checkout that has extracted/ + progress/ + src/
-python /path/to/this/ChaosViewer/scripts/generate-chaos-db.py --repo /path/to/sm64ds-decomp
-# (~40s; add --no-similar for a fast regen without the coddog twin pass)
-# then hard-refresh the viewer (or restart dev)
-```
-
-The generator re-uses the exact `tools/modules.py`, `sweep.py`, and `ledger.py` so byte counts and function lists always match the canonical treemap and the matcher.
-
-## Build + deploy
-
-- `npm run build` — standard dist/
-- `npm run build:single` — single-file build (handy for quick drops or Pages)
-
-Static output works great on GitHub Pages. No server required.
-
-## Theme notes
-
-- Dark glassmorphism panels (`backdrop-blur`, subtle borders, soft shadows)
-- Primary: aero cyan, accent: fresh lime/green
-- Matched functions use a vibrant but tasteful green
-- Background orbs for that signature Frutiger Aero "fresh air + future" feeling
-- All colors chosen after inspecting the owner's GitHub avatar + classic 2006-2008 palettes (see plan.md for extraction step)
-
-No emojis in source, UI strings, commits, or docs.
-
-## Tech
-
-Vite + React 19 + TS + Tailwind v3 + d3 (for future hierarchy interactions) + the squarify algorithm ported 1:1 from the decomp's own `tools/treemap.py`.
-
-See `plan.md` in the session dir (or repo root if checked in) for the full design, reused files from both source projects, verification steps, and tradeoffs.
 
 ## License
 
-MIT (to match both the decomp and Mizuchi).
-
+MIT. UI inspired by the [Mizuchi Decomp Atlas](https://github.com/macabeus/mizuchi).
