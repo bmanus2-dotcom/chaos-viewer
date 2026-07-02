@@ -173,14 +173,14 @@ function StatusBadge({ fn, lockedBy }: { fn: ChaosFunction; lockedBy?: string })
   return (
     <span className="inline-flex gap-1.5">
       {fn.matched
-        ? <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">MATCHED</span>
+        ? <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-400/30 text-emerald-800 border border-emerald-600/40">MATCHED</span>
         : fn.div != null
-          ? <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/20 text-amber-300 border border-amber-400/30">NEAR-MISS · {fn.div} off</span>
+          ? <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-300/40 text-amber-800 border border-amber-600/40">NEAR-MISS · {fn.div} off</span>
           : fn.floor
-            ? <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-rose-500/15 text-rose-300 border border-rose-400/25" title={fn.floor}>FLOOR</span>
-            : <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-500/20 text-slate-300 border border-slate-400/25">UNMATCHED</span>}
+            ? <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-rose-300/30 text-rose-700 border border-rose-500/40" title={fn.floor}>FLOOR</span>
+            : <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-300/40 text-slate-700 border border-slate-500/40">UNMATCHED</span>}
       {lockedBy && !fn.matched && (
-        <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-violet-500/20 text-violet-300 border border-violet-400/30 inline-flex items-center gap-1" title={`claims-locked by ${lockedBy}`}>
+        <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-violet-300/40 text-violet-800 border border-violet-600/40 inline-flex items-center gap-1" title={`claims-locked by ${lockedBy}`}>
           <Lock className="w-3 h-3" /> {lockedBy}
         </span>
       )}
@@ -193,7 +193,7 @@ function Pill({ name, onClick }: { name: string; onClick?: () => void }) {
     <button
       onClick={onClick}
       disabled={!onClick}
-      className={`px-2 py-0.5 rounded text-[11px] font-mono ${onClick ? 'bg-white/10 hover:bg-aero-primary/25 text-aero-primary cursor-pointer' : 'bg-white/5 text-aero-muted cursor-default'}`}
+      className={`px-2 py-0.5 rounded text-[11px] font-mono ${onClick ? 'bg-sky-900/10 hover:bg-aero-primary/20 text-aero-primary cursor-pointer' : 'bg-sky-900/5 text-aero-muted cursor-default'}`}
     >
       {name}
     </button>
@@ -368,7 +368,12 @@ function App() {
         <header className="mb-6 flex items-end justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-aero-primary to-aero-accent flex items-center justify-center text-white font-semibold tracking-[-1px]">CV</div>
+              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center" style={{ border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 3px 10px rgba(21,78,128,0.25), inset 0 1px 0 #fff' }}>
+                <svg viewBox="0 0 100 100" className="w-7 h-7" aria-label="?">
+                  <path d="M32 34 C 28 20, 44 12, 56 16 C 70 20, 74 32, 66 41 C 60 48, 52 47, 51 56 L 50 63" fill="none" stroke="#1a1a1a" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M48 78 C 46 74, 50 71, 54 73 C 58 75, 56 81, 51 80 C 49 80, 48 79, 48 78 Z" fill="#1a1a1a" />
+                </svg>
+              </div>
               <div>
                 <div className="text-3xl font-semibold tracking-[-1.5px]">{P.title ?? 'Chaos Viewer'}</div>
                 <div className="text-aero-muted text-sm -mt-1">{P.name}</div>
@@ -395,7 +400,7 @@ function App() {
         <div className="flex gap-4">
           {/* Sidebar */}
           <div className="w-72 flex-shrink-0 aero-panel p-3 overflow-hidden flex flex-col" style={{ minHeight: '560px', maxHeight: '80vh' }}>
-            <div className="px-2 pb-2 flex items-center gap-2 border-b border-white/10 mb-1">
+            <div className="px-2 pb-2 flex items-center gap-2 border-b border-white/70 mb-1">
               <Search className="w-4 h-4 text-aero-muted" />
               <input
                 value={search}
@@ -403,15 +408,15 @@ function App() {
                 placeholder="Search name or module..."
                 className="flex-1 bg-transparent outline-none placeholder:text-aero-muted/60 text-sm"
               />
-              {search && <button onClick={() => setSearch('')} className="text-aero-muted hover:text-white"><X className="w-3.5 h-3.5" /></button>}
+              {search && <button onClick={() => setSearch('')} className="text-aero-muted hover:text-sky-900"><X className="w-3.5 h-3.5" /></button>}
             </div>
 
-            <div className="px-2 pb-2 flex items-center gap-2 text-[11px] text-aero-muted border-b border-white/10 mb-2">
+            <div className="px-2 pb-2 flex items-center gap-2 text-[11px] text-aero-muted border-b border-white/70 mb-2">
               <span>sort</span>
               <select
                 value={sortMode}
                 onChange={e => setSortMode(e.target.value as SortMode)}
-                className="flex-1 bg-white/5 border border-white/10 rounded px-1.5 py-0.5 outline-none text-aero-text text-[11px]"
+                className="flex-1 bg-sky-900/5 border border-white/70 rounded px-1.5 py-0.5 outline-none text-aero-text text-[11px]"
               >
                 <option value="name">name (a–z)</option>
                 <option value="pctAsc">% matched ↑ (worst first)</option>
@@ -431,7 +436,7 @@ function App() {
                   <div key={mod} className="mb-1">
                     <button
                       onClick={() => setSelectedPath(selectedPath === mod ? null : mod)}
-                      className={`w-full flex items-center justify-between px-2 py-1 rounded hover:bg-white/5 text-left ${selectedPath === mod ? 'bg-aero-primary/20 text-aero-primary' : 'text-aero-text'}`}
+                      className={`w-full flex items-center justify-between px-2 py-1 rounded hover:bg-sky-600/10 text-left ${selectedPath === mod ? 'bg-aero-primary/20 text-aero-primary' : 'text-aero-text'}`}
                     >
                       <span className="font-medium">{mod}</span>
                       <span className="text-[11px] tabular-nums text-aero-muted">{formatPct(s.matched, s.total)}% · {s.matched}/{s.total}</span>
@@ -440,7 +445,7 @@ function App() {
                       <button
                         key={fn.id}
                         onClick={() => selectFunction(fn.id)}
-                        className={`w-full text-left pl-6 pr-2 py-0.5 text-xs truncate rounded flex items-center gap-1.5 hover:bg-white/5 ${selectedId === fn.id ? 'bg-aero-primary/15 text-aero-primary font-medium' : 'text-aero-muted'}`}
+                        className={`w-full text-left pl-6 pr-2 py-0.5 text-xs truncate rounded flex items-center gap-1.5 hover:bg-sky-600/10 ${selectedId === fn.id ? 'bg-aero-primary/15 text-aero-primary font-medium' : 'text-aero-muted'}`}
                         title={lockedBy.has(fn.id) ? `${fn.name} (locked by ${lockedBy.get(fn.id)})` : fn.name}
                       >
                         <span className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${fn.matched ? 'bg-aero-matched' : lockedBy.has(fn.id) ? 'bg-violet-400' : fn.div != null ? 'bg-amber-400' : 'bg-aero-unmatched'}`} />
@@ -451,12 +456,12 @@ function App() {
                 )
               })}
             </div>
-            <div className="text-[10px] text-aero-muted/60 px-2 pt-2 border-t border-white/10">Snapshot {db.generatedAt} • amber = near-miss draft • violet = claims-locked</div>
+            <div className="text-[10px] text-aero-muted/60 px-2 pt-2 border-t border-white/70">Snapshot {db.generatedAt} • amber = near-miss draft • violet = claims-locked</div>
           </div>
 
           {/* Main content */}
           <div className="flex-1 min-w-0 space-y-4">
-            <div className="flex gap-1 border-b border-white/10 pb-1">
+            <div className="flex gap-1 border-b border-white/70 pb-1">
               {[
                 { id: 'treemap' as const, label: 'Treemap Explorer', icon: BarChart3 },
                 { id: 'prioritize' as const, label: 'Prioritize', icon: Target },
@@ -468,7 +473,7 @@ function App() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-1.5 rounded-t text-sm font-medium transition ${active ? 'bg-aero-panel border border-white/10 border-b-aero-panel -mb-px' : 'text-aero-muted hover:text-aero-text'}`}
+                    className={`flex items-center gap-2 px-4 py-1.5 rounded-t text-sm font-medium transition ${active ? 'bg-aero-panel border border-white/70 border-b-aero-panel -mb-px' : 'text-aero-muted hover:text-aero-text'}`}
                   >
                     <Icon className="w-4 h-4" /> {tab.label}
                   </button>
@@ -491,8 +496,7 @@ function App() {
                       if (id === '__clear__') { setSelectedId(null); return }
                       selectFunction(id)
                     }}
-                    width={1080}
-                    height={420}
+                    height={460}
                   />
                   <div className="mt-2 text-[11px] text-aero-muted">Green = matched (exact bytes). Gray = unmatched. Modules sized by total mass. Same layout math as the README treemap.</div>
                 </div>
@@ -509,7 +513,7 @@ function App() {
                         ['biggest', 'Biggest bytes'],
                       ] as [PriorityMode, string][]).map(([m, label]) => (
                         <button key={m} onClick={() => setPriorityMode(m)}
-                          className={`px-3 py-1 rounded text-xs font-medium ${priorityMode === m ? 'bg-aero-primary/25 text-aero-primary' : 'bg-white/5 text-aero-muted hover:text-aero-text'}`}>
+                          className={`px-3 py-1 rounded text-xs font-medium ${priorityMode === m ? 'bg-aero-primary/25 text-aero-primary' : 'bg-sky-900/5 text-aero-muted hover:text-aero-text'}`}>
                           {label}
                         </button>
                       ))}
@@ -526,14 +530,14 @@ function App() {
                       <div key={f.id} className={`aero-panel px-3 py-1 flex justify-between items-center hover:border-aero-primary/30 ${selectedId === f.id ? 'border-aero-primary/60' : ''}`}>
                         <div onClick={() => selectFunction(f.id)} className="font-mono text-xs truncate pr-3 cursor-pointer flex-1">{f.name}</div>
                         <div className="tabular-nums text-aero-muted text-[11px] shrink-0 flex items-center gap-2">
-                          {priorityMode === 'nearly' && <span className="text-amber-300">{f.div} off</span>}
+                          {priorityMode === 'nearly' && <span className="text-amber-800">{f.div} off</span>}
                           {priorityMode === 'scaffolded' && <span className="text-aero-primary">sim {f.sim}</span>}
                           <span>{f.size.toLocaleString()} B</span>
                           <span>{f.module}</span>
                           <button
                             onClick={() => toggleBatch(f.id)}
                             title={batch.includes(f.id) ? 'remove from batch' : 'add to batch prompt'}
-                            className={`p-0.5 rounded ${batch.includes(f.id) ? 'text-amber-300 hover:text-rose-300' : 'text-aero-muted hover:text-aero-primary'}`}
+                            className={`p-0.5 rounded ${batch.includes(f.id) ? 'text-amber-800 hover:text-rose-600' : 'text-aero-muted hover:text-aero-primary'}`}
                           >
                             {batch.includes(f.id) ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                           </button>
@@ -555,13 +559,13 @@ function App() {
                       {batch.map(id => {
                         const f = byId.get(id)
                         return f ? (
-                          <span key={id} className="inline-flex items-center gap-1 bg-white/10 rounded px-2 py-0.5 text-[11px] font-mono">
+                          <span key={id} className="inline-flex items-center gap-1 bg-sky-900/10 rounded px-2 py-0.5 text-[11px] font-mono">
                             {f.name}
-                            <button onClick={() => toggleBatch(id)} className="text-aero-muted hover:text-rose-300"><X className="w-3 h-3" /></button>
+                            <button onClick={() => toggleBatch(id)} className="text-aero-muted hover:text-rose-600"><X className="w-3 h-3" /></button>
                           </span>
                         ) : null
                       })}
-                      <button onClick={() => setBatch([])} className="text-[11px] text-aero-muted hover:text-rose-300 underline ml-1">clear</button>
+                      <button onClick={() => setBatch([])} className="text-[11px] text-aero-muted hover:text-rose-600 underline ml-1">clear</button>
                     </div>
                   )}
 
@@ -611,7 +615,7 @@ function App() {
                           {batch.includes(selectedFn.id) ? <><Minus className="w-3 h-3" /> remove from batch</> : <><Plus className="w-3 h-3" /> add to batch</>}
                         </button>
                       )}
-                      <button onClick={() => setSelectedId(null)} className="text-aero-muted hover:text-white"><X className="w-4 h-4" /></button>
+                      <button onClick={() => setSelectedId(null)} className="text-aero-muted hover:text-sky-900"><X className="w-4 h-4" /></button>
                     </div>
                   </div>
 
@@ -649,7 +653,7 @@ function App() {
 
                       {detail.draft && (
                         <div className="glass p-3 rounded-lg">
-                          <div className="text-[11px] uppercase tracking-wide text-amber-300 mb-1">Near-miss draft — {detail.draftDiv} instruction(s) from matching</div>
+                          <div className="text-[11px] uppercase tracking-wide text-amber-800 mb-1">Near-miss draft — {detail.draftDiv} instruction(s) from matching</div>
                           <pre className="text-[10.5px] mono overflow-auto max-h-[200px] whitespace-pre-wrap leading-snug">{detail.draft}</pre>
                         </div>
                       )}
