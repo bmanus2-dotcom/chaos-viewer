@@ -1473,9 +1473,11 @@ function App() {
             </div>
             <div className="text-[10px] text-aero-muted leading-relaxed max-w-[680px] mx-auto">
               Chaos Viewer &copy; {new Date().getFullYear()} <a href={AUTHOR_URL} target="_blank" rel="noreferrer" className="underline hover:text-aero-text">{AUTHOR}</a>. Released under the MIT License.
-              Progress data generated from the {P.name || 'project'} tooling; no copyrighted ROM or extracted
-              assets are included or distributed. All trademarks and game assets belong to their respective owners
-              and are not affiliated with or endorsed by this project.
+              Progress data generated from the {P.name || 'project'} tooling. No ROM, binaries, or game assets
+              are distributed; still-unmatched functions are described as annotated disassembly text (the same
+              practice as decomp repos publishing .s files), which leaves the data once a function is matched.
+              All trademarks and game assets belong to their respective owners and are not affiliated with or
+              endorsed by this project.
             </div>
           </div>
         </footer>
