@@ -373,11 +373,11 @@ input, textarea, pre, code, .allow-select {
 .copy-float {
   position: absolute;
   left: 50%;
-  top: 0;
+  top: 5px; /* start on the button's text line so the phrase lifts out of it */
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 14px; /* same size as the button label (text-sm) */
+  font-weight: 600;
   pointer-events: none;
   text-shadow: 0 1px 3px rgb(255 255 255 / 0.7);
   animation: copy-float-up 1.4s ease-out forwards;
