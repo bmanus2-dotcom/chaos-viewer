@@ -1053,7 +1053,7 @@ function App() {
     }
     setCopyKey(k => k + 1)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2600)
+    setTimeout(() => setCopied(false), 3100)
   }
 
   return (
@@ -1386,7 +1386,8 @@ function App() {
                         </div>
                       )}
                       <pre className={`glass p-3 text-[11px] overflow-auto max-h-[300px] whitespace-pre-wrap mono leading-snug transition-[filter,opacity] duration-300 ${copied ? 'opacity-50 grayscale' : ''}`}>{promptText}</pre>
-                      <div className="relative inline-flex items-center gap-2 flex-wrap">
+                      <div className="inline-flex items-center gap-2 flex-wrap">
+                        <span className="relative inline-flex">
                         <button
                           onClick={() => {
                             const text = promptText
@@ -1400,12 +1401,18 @@ function App() {
                             setCopyMsg(COPY_PHRASES[Math.floor(Math.random() * COPY_PHRASES.length)])
                             setCopyKey(k => k + 1)
                             setCopied(true)
-                            setTimeout(() => setCopied(false), 1500)
+                            setTimeout(() => setCopied(false), 2000)
                           }}
                           className="aero-button px-3 py-1 text-sm"
                         >
                           {copied ? copyMsg : `Copy prompt${batch.length ? ` (${batch.length} functions)` : ''}`}
                         </button>
+                        {copied && (
+                          <span key={copyKey} className="copy-float" style={{ color: 'var(--aero-primary)' }}>
+                            {copyMsg}
+                          </span>
+                        )}
+                        </span>
                         <span className="relative inline-flex">
                           <button
                             onClick={() => { setClaudeMenu(false); openInClaude('web') }}
@@ -1443,11 +1450,6 @@ function App() {
                             </div>
                           )}
                         </span>
-                        {copied && (
-                          <span key={copyKey} className="copy-float" style={{ color: 'var(--aero-primary)' }}>
-                            {copyMsg}
-                          </span>
-                        )}
                       </div>
                       {batch.length === 0 && selectedFn && !detail && <span className="text-[11px] text-aero-muted ml-2">loading disassembly/draft…</span>}
                     </div>

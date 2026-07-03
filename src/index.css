@@ -380,7 +380,7 @@ input, textarea, pre, code, .allow-select {
   font-weight: 600;
   pointer-events: none;
   text-shadow: 0 1px 3px rgb(255 255 255 / 0.7);
-  animation: copy-float-up 1.4s ease-out forwards;
+  animation: copy-float-up 1.9s ease-out forwards;
 }
 @keyframes copy-float-up {
   0%   { opacity: 0; transform: translate(-50%, 4px) scale(0.85); }
