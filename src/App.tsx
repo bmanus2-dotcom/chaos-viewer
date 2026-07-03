@@ -472,8 +472,10 @@ function SetupModal({ open, onClose, contrib, setContrib, canDismiss, claimHandl
     location.reload()
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgb(var(--aero-text-rgb) / 0.35)', backdropFilter: 'blur(6px)' }}>
-      <div className="aero-panel p-6 w-[520px] max-w-[92vw] space-y-4">
+    // dark scrim regardless of theme (the old text-color scrim went WHITE on
+    // dark themes and washed the modal out) + a near-opaque panel surface
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(4, 14, 24, 0.55)', backdropFilter: 'blur(10px)' }}>
+      <div className="aero-panel aero-modal p-6 w-[520px] max-w-[92vw] space-y-4">
         <div className="text-xl font-semibold">Point Chaos Viewer at your decomp</div>
         <div className="text-sm text-aero-muted">
           Enter the GitHub repository this atlas is for. Generate the data with your own

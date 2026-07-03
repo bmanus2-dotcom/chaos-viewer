@@ -220,6 +220,17 @@ body {
 
 select option { color: var(--aero-text); background: rgb(var(--aero-gloss-rgb) / 0.95); }
 
+/* modal surface: near-opaque theme background so the busy treemap behind it
+   cannot bleed through (the regular translucent panel was unreadable over the
+   canvas on dark themes) */
+.aero-modal {
+  /* the theme's own glass tint layered over a solid base: keeps each theme's
+     panel color but with nothing showing through */
+  background:
+    linear-gradient(180deg, var(--aero-glass) 0%, var(--aero-panel) 100%),
+    rgb(var(--aero-bg-rgb) / 0.98);
+}
+
 /* the app shell is non-selectable: no text caret / selection highlight on
    headers, labels, buttons, stats, or the treemap (double-click and long-press
    were leaving blinking carets on plain UI text) */
