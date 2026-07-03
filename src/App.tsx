@@ -1048,8 +1048,8 @@ function App() {
         claimHandle={claimHandle} signedIn={!!claimSession} onSignIn={signInWithGitHub} onSignOut={signOut} />
 
       <div className="relative z-10 w-full px-3 sm:px-4 py-4 select-none">
-        <header className="aero-banner mb-4 px-5 py-4 flex items-end justify-between select-none">
-          <div>
+        <header className="mb-4 flex flex-col lg:flex-row gap-3 items-stretch select-none">
+          <div className="aero-banner flex-1 px-5 py-4 flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-3">
               <PopLogo />
               <div>
@@ -1080,10 +1080,10 @@ function App() {
             )}
           </div>
 
-          <div className="text-right">
+          <div className="aero-banner flex-1 px-5 py-4 flex flex-col items-center justify-center text-center">
             <div className="font-semibold">{stats.matchedFunctions.toLocaleString()} / {stats.totalFunctions.toLocaleString()} functions <span className="text-aero-primary">({fnPct}%)</span></div>
             <div className="text-sm text-aero-muted">{stats.matchedBytes.toLocaleString()} / {stats.totalBytes.toLocaleString()} bytes <span className="text-aero-primary">({byPct}%)</span> • {modules.length} modules</div>
-            <div className="text-[11px] mt-1 flex items-center gap-2 justify-end">
+            <div className="text-[11px] mt-1 flex items-center gap-2 justify-center">
               {P.discord && (
                 <a href={P.discord} target="_blank" rel="noreferrer" title="project Discord"
                    className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 mr-1"
@@ -1095,7 +1095,7 @@ function App() {
               <button onClick={() => setSetupOpen(true)} title="project settings" className="text-aero-muted hover:text-aero-primary"><Settings className="w-3.5 h-3.5" /></button>
             </div>
             {(P.claimsApi || P.github) && claimsStatus !== 'unavailable' && (
-              <div className="text-[11px] mt-0.5 flex items-center gap-1.5 justify-end">
+              <div className="text-[11px] mt-0.5 flex items-center gap-1.5 justify-center flex-wrap">
                 <span className={`inline-block w-1.5 h-1.5 rounded-full ${claimsStatus === 'live' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
                 <span className="text-aero-muted">
                   claims {claimsStatus === 'live' ? `live · ${claims.length} active lock${claims.length === 1 ? '' : 's'}` : claimsStatus}
@@ -1123,7 +1123,7 @@ function App() {
               </div>
             )}
             {claimMsg && (
-              <div className="text-[11px] mt-0.5 text-aero-muted max-w-[380px] text-right">
+              <div className="text-[11px] mt-0.5 text-aero-muted max-w-[380px] text-center">
                 {claimMsg} <button onClick={() => setClaimMsg('')} className="text-aero-primary hover:underline">dismiss</button>
               </div>
             )}
