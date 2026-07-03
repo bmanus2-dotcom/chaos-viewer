@@ -1407,15 +1407,6 @@ function App() {
                             </div>
                           )}
                         </span>
-                        {typeof navigator.share === 'function' && (
-                          <button
-                            onClick={() => { navigator.share({ text: promptText }).catch(() => {}) }}
-                            className="glass px-3 py-1 text-sm rounded-full hover:brightness-105"
-                            title="share this prompt via the system share sheet (e.g. into the Claude app)"
-                          >
-                            Share...
-                          </button>
-                        )}
                         {copied && (
                           <span key={copyKey} className="copy-float" style={{ color: 'var(--aero-primary)' }}>
                             {copyMsg}

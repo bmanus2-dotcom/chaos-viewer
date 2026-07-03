@@ -160,7 +160,7 @@ body {
 .win {
   border: 1px solid var(--aero-border);
   border-radius: 10px;
-  overflow: hidden;
+  /* no overflow:hidden - it clipped dropdowns; corners are rounded per-part */
   backdrop-filter: blur(18px);
   background: linear-gradient(180deg, var(--aero-glass) 0%, var(--aero-panel) 100%);
   box-shadow:
@@ -168,6 +168,7 @@ body {
     inset 0 0 0 1px rgb(var(--aero-gloss-rgb) / 0.25);
 }
 .win-titlebar {
+  border-radius: 9px 9px 0 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -199,7 +200,7 @@ body {
     linear-gradient(180deg, rgb(255 255 255 / 0.45) 0%, rgb(255 255 255 / 0.05) 50%, rgb(0 0 0 / 0.15) 100%),
     linear-gradient(180deg, #e8564a 0%, #c2271d 100%);
 }
-.win-body { padding: 12px; }
+.win-body { padding: 12px; border-radius: 0 0 9px 9px; }
 
 /* attached folder tabs (sit flush on the window body, active tab merges in) */
 .tab-strip {
