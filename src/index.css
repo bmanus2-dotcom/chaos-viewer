@@ -220,6 +220,14 @@ body {
 
 select option { color: var(--aero-text); background: rgb(var(--aero-gloss-rgb) / 0.95); }
 
+/* the app shell is non-selectable: no text caret / selection highlight on
+   headers, labels, buttons, stats, or the treemap (double-click and long-press
+   were leaving blinking carets on plain UI text) */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* keep real text interactive even though the app shell is non-selectable */
 input, textarea, pre, code, .allow-select {
   -webkit-user-select: text;

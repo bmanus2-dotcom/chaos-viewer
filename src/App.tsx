@@ -374,6 +374,11 @@ function SetupModal({ open, onClose, contrib, setContrib, canDismiss }: { open: 
   if (!open) return null
   async function save() {
     const gh = url.trim().replace(/\/+$/, '')
+    // Nothing changed (or nothing entered while a project is already set up):
+    // just close. The contributor-bubbles checkbox persists on toggle, so Save
+    // must never error out and force a cancel when the repo link is untouched.
+    const unchanged = gh === (P.github ?? '').replace(/\/+$/, '') && !advanced.trim()
+    if (canDismiss && (unchanged || (!gh && !advanced.trim()))) { onClose(); return }
     if (!/^https:\/\/github\.com\/[^/]+\/[^/]+$/.test(gh)) {
       setErr('Enter a repo link like https://github.com/you/your-decomp')
       return
@@ -422,36 +427,45 @@ function SetupModal({ open, onClose, contrib, setContrib, canDismiss }: { open: 
             ))}
           </div>
         )}
-        <details>
-          <summary className="text-xs text-aero-muted cursor-pointer">Advanced: paste a full project config JSON (compiler, verify command, claims...)</summary>
-          <textarea
-            value={advanced}
-            onChange={e => setAdvanced(e.target.value)}
-            rows={5}
-            placeholder='{"compiler": "...", "verifyCommand": "python tools/verify.py --func {name} ..."}'
-            className="mt-2 w-full glass px-3 py-2 text-[11px] mono outline-none"
-          />
-        </details>
+        {/* First startup stays minimal: repo link + featured example + Save.
+            The full page (advanced config, share link, contributor bubbles,
+            reset) lives in Settings (canDismiss). */}
+        {canDismiss && (
+          <details>
+            <summary className="text-xs text-aero-muted cursor-pointer">Advanced: paste a full project config JSON (compiler, verify command, claims...)</summary>
+            <textarea
+              value={advanced}
+              onChange={e => setAdvanced(e.target.value)}
+              rows={5}
+              placeholder='{"compiler": "...", "verifyCommand": "python tools/verify.py --func {name} ..."}'
+              className="mt-2 w-full glass px-3 py-2 text-[11px] mono outline-none"
+            />
+          </details>
+        )}
         {err && <div className="text-xs text-rose-600">{err}</div>}
-        {P.github && (
+        {canDismiss && P.github && (
           <button onClick={() => { navigator.clipboard?.writeText(shareLink()).catch(() => {}) }}
                   className="w-full glass px-3 py-2 text-xs text-left hover:brightness-105">
             <span className="font-medium text-aero-primary">Copy shareable setup link</span>
             <span className="block text-[11px] text-aero-muted break-all mt-0.5">{shareLink()}</span>
           </button>
         )}
-        <label className="flex items-start gap-2 text-sm cursor-pointer pt-1">
-          <input type="checkbox" checked={contrib} onChange={e => setContrib(e.target.checked)} className="mt-0.5 accent-aero-primary" />
-          <span>
-            <span className="font-medium">Contributor bubbles</span>
-            <span className="block text-[11px] text-aero-muted">Pull the repo's GitHub contributors and let roughly 1 in 12 background bubbles wear a contributor's avatar. Off by default; bot/Claude accounts are skipped.</span>
-          </span>
-        </label>
+        {canDismiss && (
+          <label className="flex items-start gap-2 text-sm cursor-pointer pt-1">
+            <input type="checkbox" checked={contrib} onChange={e => setContrib(e.target.checked)} className="mt-0.5 accent-aero-primary" />
+            <span>
+              <span className="font-medium">Contributor bubbles</span>
+              <span className="block text-[11px] text-aero-muted">Pull the repo's GitHub contributors and let roughly 1 in 12 background bubbles wear a contributor's avatar. Off by default; bot/Claude accounts are skipped.</span>
+            </span>
+          </label>
+        )}
         <div className="flex justify-end gap-2">
-          <button onClick={() => { localStorage.removeItem('chaos-project'); location.href = location.origin + location.pathname }}
-                  className="px-3 py-1 text-sm text-aero-muted hover:text-rose-600 mr-auto" title="forget the saved repo and use this build's bundled project">
-            Reset
-          </button>
+          {canDismiss && (
+            <button onClick={() => { localStorage.removeItem('chaos-project'); location.href = location.origin + location.pathname }}
+                    className="px-3 py-1 text-sm text-aero-muted hover:text-rose-600 mr-auto" title="forget the saved repo and use this build's bundled project">
+              Reset
+            </button>
+          )}
           {canDismiss && <button onClick={onClose} className="px-3 py-1 text-sm text-aero-muted hover:text-aero-text">cancel</button>}
           <button onClick={save} disabled={checking} className="aero-button px-4 py-1.5 text-sm disabled:opacity-60">{checking ? 'Checking repo for data…' : 'Save'}</button>
         </div>
