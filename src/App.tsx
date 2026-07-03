@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Search, BarChart3, Code2, ChevronRight, X, Target, Link2, FileCode, Lock, RefreshCw, Plus, Minus, Palette, Settings, MessageCircle } from 'lucide-react'
+import { Search, ChevronRight, X, Link2, FileCode, Lock, RefreshCw, Plus, Minus, Palette, Settings, MessageCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Treemap } from './components/Treemap'
 import { Bubbles } from './components/Bubbles'
@@ -382,6 +382,19 @@ function ThemePicker() {
         />
       ))}
     </span>
+  )
+}
+
+// tiny jelly-? bubble used as the tab glyph (same art as the logo)
+function BubbleGlyph({ size = 16 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 100 100" width={size} height={size} aria-hidden>
+      <circle cx="50" cy="50" r="46" fill="rgba(255,255,255,0.35)" stroke="rgba(255,255,255,0.9)" strokeWidth="4" />
+      <ellipse cx="34" cy="26" rx="14" ry="8" fill="white" opacity="0.85" transform="rotate(-24 34 26)" />
+      <path d="M34 36 C 32 24, 46 17, 56 21 C 67 25, 70 35, 62 43 C 56 49, 50 48, 49 56 L 49 61"
+            fill="none" stroke="#7fd42e" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="49" cy="76" r="8" fill="#7fd42e" />
+    </svg>
   )
 }
 
@@ -990,8 +1003,8 @@ function App() {
       <SetupModal open={setupOpen || !hasUsableData} onClose={() => setSetupOpen(false)} contrib={contribBubbles} setContrib={setContribBubbles} canDismiss={hasUsableData}
         claimHandle={claimHandle} signedIn={!!claimSession} onSignIn={signInWithGitHub} onSignOut={signOut} />
 
-      <div className="relative z-10 w-full max-w-[1900px] mx-auto px-4 sm:px-6 xl:px-10 py-6 xl:py-8 select-none">
-        <header className="mb-6 flex items-end justify-between select-none">
+      <div className="relative z-10 w-full px-3 sm:px-4 py-4 select-none">
+        <header className="aero-banner mb-4 px-5 py-4 flex items-end justify-between select-none">
           <div>
             <div className="flex items-center gap-3">
               <PopLogo />
@@ -1063,7 +1076,9 @@ function App() {
 
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Sidebar */}
-          <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 aero-panel p-3 overflow-hidden flex flex-col" style={{ minHeight: '420px', maxHeight: '80vh' }}>
+          <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 win overflow-hidden flex flex-col" style={{ minHeight: '420px', maxHeight: '80vh' }}>
+            <div className="win-titlebar"><span className="win-title">Modules</span><span className="win-btns" aria-hidden><span className="win-btn">&#8211;</span><span className="win-btn">&#9633;</span><span className="win-btn win-btn-close">&#10005;</span></span></div>
+            <div className="p-3 overflow-hidden flex flex-col flex-1 min-h-0">
             <div className="px-2 pb-2 flex items-center gap-2 border-b border-white/70 mb-1">
               <Search className="w-4 h-4 text-aero-muted" />
               <input
@@ -1143,31 +1158,30 @@ function App() {
               })}
             </div>
             <div className="text-[10px] text-aero-muted/60 px-2 pt-2 border-t border-white/70">Snapshot {db.generatedAt} • amber = near-miss draft • violet = claims-locked</div>
+            </div>
           </div>
 
           {/* Main content */}
           <div className="flex-1 min-w-0 space-y-4">
-            <div className="flex gap-1 border-b border-white/70 pb-1">
-              {[
-                { id: 'treemap' as const, label: 'Treemap Explorer', icon: BarChart3 },
-                { id: 'prioritize' as const, label: 'Prioritize', icon: Target },
-                { id: 'prompt' as const, label: `Prompt Builder${batch.length ? ` (${batch.length})` : ''}`, icon: Code2 },
-              ].map(tab => {
-                const Icon = tab.icon
-                const active = activeTab === tab.id
-                return (
+            <div className="win">
+              <div className="win-titlebar"><span className="win-title">{P.name || 'Atlas'}</span><span className="win-btns" aria-hidden><span className="win-btn">&#8211;</span><span className="win-btn">&#9633;</span><span className="win-btn win-btn-close">&#10005;</span></span></div>
+              <div className="tab-strip">
+                {[
+                  { id: 'treemap' as const, label: 'Treemap Explorer' },
+                  { id: 'prioritize' as const, label: 'Priorities' },
+                  { id: 'prompt' as const, label: `Prompt Builder${batch.length ? ` (${batch.length})` : ''}` },
+                ].map(tab => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-1.5 rounded-t text-sm font-medium transition ${active ? 'bg-aero-panel border border-white/70 border-b-aero-panel -mb-px' : 'text-aero-muted hover:text-aero-text'}`}
+                    className={`tab-item ${activeTab === tab.id ? 'active' : ''}`}
                   >
-                    <Icon className="w-4 h-4" /> {tab.label}
+                    <BubbleGlyph size={15} /> {tab.label}
                   </button>
-                )
-              })}
-            </div>
+                ))}
+              </div>
 
-            <div className="aero-panel p-4 min-h-[420px]">
+              <div className="tab-content p-4 min-h-[420px]">
               {activeTab === 'treemap' && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -1208,7 +1222,7 @@ function App() {
               {activeTab === 'prioritize' && (
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <div className="font-medium">Prioritize <span className="text-[11px] text-aero-muted font-normal">(claims-locked functions hidden)</span></div>
+                    <div className="font-medium">Priorities <span className="text-[11px] text-aero-muted font-normal">(claims-locked functions hidden)</span></div>
                     <div className="flex gap-1">
                       {([
                         ['nearly', 'Nearly done'],
@@ -1325,12 +1339,15 @@ function App() {
                   )}
                 </div>
               )}
+              </div>
             </div>
 
             {/* Details panel */}
             <AnimatePresence>
               {selectedFn && (
-                <motion.div initial={{opacity:0, y:6}} animate={{opacity:1, y:0}} exit={{opacity:0}} className="aero-panel p-4 space-y-3">
+                <motion.div initial={{opacity:0, y:6}} animate={{opacity:1, y:0}} exit={{opacity:0}} className="win">
+                  <div className="win-titlebar"><span className="win-title mono">{selectedFn.name}</span><span className="win-btns" aria-hidden><span className="win-btn">&#8211;</span><span className="win-btn">&#9633;</span><button className="win-btn win-btn-close" style={{cursor:'pointer'}} onClick={() => setSelectedId(null)}>&#10005;</button></span></div>
+                  <div className="win-body space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="font-semibold mono text-lg flex items-center gap-3">{selectedFn.name} <StatusBadge fn={selectedFn} lockedBy={lockedBy.get(selectedFn.id)} /></div>
@@ -1399,6 +1416,7 @@ function App() {
                     </div>
                   )}
                   {!detail && <div className="text-[11px] text-aero-muted">loading details…</div>}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

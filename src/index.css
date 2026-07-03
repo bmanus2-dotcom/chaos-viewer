@@ -156,6 +156,98 @@ body {
     inset 0 -1px 0 rgb(var(--aero-gloss-rgb) / 0.3);
 }
 
+/* ---- retro-OS window chrome (Vista/XP-era glossy windows) ---------------- */
+.win {
+  border: 1px solid var(--aero-border);
+  border-radius: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(180deg, var(--aero-glass) 0%, var(--aero-panel) 100%);
+  box-shadow:
+    0 10px 30px rgb(var(--aero-text-rgb) / 0.2),
+    inset 0 0 0 1px rgb(var(--aero-gloss-rgb) / 0.25);
+}
+.win-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 8px 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0.12) 46%, rgb(255 255 255 / 0) 52%),
+    linear-gradient(180deg, rgb(var(--aero-primary-rgb) / 0.95) 0%, rgb(var(--aero-primary-rgb) / 0.75) 100%);
+  border-bottom: 1px solid rgb(var(--aero-gloss-rgb) / 0.35);
+  user-select: none;
+}
+.win-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.win-btns { display: inline-flex; gap: 4px; flex-shrink: 0; }
+.win-btn {
+  width: 20px; height: 15px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 4px;
+  font-size: 9px; line-height: 1; color: #fff;
+  border: 1px solid rgb(255 255 255 / 0.55);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0.06) 50%, rgb(0 0 0 / 0.12) 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+}
+.win-btn-close {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.45) 0%, rgb(255 255 255 / 0.05) 50%, rgb(0 0 0 / 0.15) 100%),
+    linear-gradient(180deg, #e8564a 0%, #c2271d 100%);
+}
+.win-body { padding: 12px; }
+
+/* attached folder tabs (sit flush on the window body, active tab merges in) */
+.tab-strip {
+  display: flex;
+  gap: 2px;
+  padding: 6px 10px 0 10px;
+  background: linear-gradient(180deg, rgb(var(--aero-gloss-rgb) / 0.14), rgb(var(--aero-gloss-rgb) / 0.02));
+}
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 9px 9px 0 0;
+  color: var(--aero-muted);
+  position: relative;
+  top: 1px;
+}
+.tab-item:hover { color: var(--aero-text); background: rgb(var(--aero-gloss-rgb) / 0.2); }
+.tab-item.active {
+  color: var(--aero-text);
+  background: linear-gradient(180deg, rgb(var(--aero-gloss-rgb) / 0.65), rgb(var(--aero-gloss-rgb) / 0.28));
+  border-color: var(--aero-border);
+  box-shadow: inset 0 1px 0 rgb(var(--aero-gloss-rgb) / 0.9);
+}
+.tab-content {
+  border-top: 1px solid var(--aero-border);
+  background: linear-gradient(180deg, rgb(var(--aero-gloss-rgb) / 0.22), transparent 120px);
+}
+
+/* glossy site banner (big header band) */
+.aero-banner {
+  border: 1px solid var(--aero-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.6) 0%, rgb(255 255 255 / 0.14) 46%, rgb(255 255 255 / 0.02) 55%, rgb(255 255 255 / 0.16) 100%),
+    linear-gradient(100deg, rgb(var(--aero-primary-rgb) / 0.5) 0%, rgb(var(--aero-primary-rgb) / 0.22) 45%, rgb(var(--aero-accent-rgb) / 0.3) 100%);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 8px 26px rgb(var(--aero-text-rgb) / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.85);
+}
+
 /* Aqua gel button (top sheen + saturated base) */
 .aero-button {
   background:
