@@ -1308,7 +1308,7 @@ function App() {
                         </div>
                       )}
                       <pre className={`glass p-3 text-[11px] overflow-auto max-h-[300px] whitespace-pre-wrap mono leading-snug transition-[filter,opacity] duration-300 ${copied ? 'opacity-50 grayscale' : ''}`}>{promptText}</pre>
-                      <div className="relative inline-block">
+                      <div className="relative inline-flex items-center gap-2 flex-wrap">
                         <button
                           onClick={() => {
                             const text = promptText
@@ -1328,6 +1328,38 @@ function App() {
                         >
                           {copied ? copyMsg : `Copy prompt${batch.length ? ` (${batch.length} functions)` : ''}`}
                         </button>
+                        <button
+                          onClick={() => {
+                            const text = promptText
+                            // always copy first: the paste fallback and truncation safety net
+                            try { navigator.clipboard?.writeText(text).catch(() => legacyCopy(text)) } catch { legacyCopy(text) }
+                            const url = 'https://claude.ai/new?q=' + encodeURIComponent(text)
+                            if (url.length < 8000) {
+                              window.open(url, '_blank', 'noopener')
+                              setCopyMsg('Opened in Claude')
+                            } else {
+                              // too big for a URL: open a fresh chat, prompt is on the clipboard
+                              window.open('https://claude.ai/new', '_blank', 'noopener')
+                              setCopyMsg('Prompt copied - paste it into Claude')
+                            }
+                            setCopyKey(k => k + 1)
+                            setCopied(true)
+                            setTimeout(() => setCopied(false), 2200)
+                          }}
+                          className="aero-button px-3 py-1 text-sm"
+                          title="open a new claude.ai chat on your own account with this prompt (large prompts are copied for a one-tap paste)"
+                        >
+                          Open in Claude
+                        </button>
+                        {typeof navigator.share === 'function' && (
+                          <button
+                            onClick={() => { navigator.share({ text: promptText }).catch(() => {}) }}
+                            className="glass px-3 py-1 text-sm rounded-full hover:brightness-105"
+                            title="share this prompt via the system share sheet (e.g. into the Claude app)"
+                          >
+                            Share...
+                          </button>
+                        )}
                         {copied && (
                           <span key={copyKey} className="copy-float" style={{ color: 'var(--aero-primary)' }}>
                             {copyMsg}
