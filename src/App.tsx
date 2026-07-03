@@ -1381,25 +1381,28 @@ function App() {
           </div>
         </div>
 
-        <footer className="mt-10 pointer-events-auto text-center space-y-2 pb-4">
-          <div className="flex items-center justify-center gap-4 text-[12px]">
-            <a href={AUTHOR_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-aero-primary hover:underline">
-              <FileCode className="w-3.5 h-3.5" /> {AUTHOR} on GitHub
-            </a>
-            {P.discord && (
-              <a href={P.discord} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:underline" style={{ color: '#5865F2' }}>
-                <MessageCircle className="w-3.5 h-3.5" /> Discord
+        <footer className="mt-10 pointer-events-auto text-center pb-4 flex justify-center">
+          {/* glass bubble behind the credits so they read on every theme */}
+          <div className="aero-panel px-6 py-3 space-y-2 max-w-[760px]">
+            <div className="flex items-center justify-center gap-4 text-[12px] flex-wrap">
+              <a href={AUTHOR_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-aero-primary hover:underline">
+                <FileCode className="w-3.5 h-3.5" /> {AUTHOR} on GitHub
               </a>
-            )}
-            <a href="https://github.com/macabeus/mizuchi" target="_blank" rel="noreferrer" className="text-aero-muted hover:text-aero-text hover:underline">
-              inspired by Mizuchi Atlas
-            </a>
-          </div>
-          <div className="text-[10px] text-aero-muted/70 leading-relaxed max-w-[680px] mx-auto">
-            Chaos Viewer &copy; {new Date().getFullYear()} <a href={AUTHOR_URL} target="_blank" rel="noreferrer" className="underline hover:text-aero-text">{AUTHOR}</a>. Released under the MIT License.
-            Progress data generated from the {P.name || 'project'} tooling; no copyrighted ROM or extracted
-            assets are included or distributed. All trademarks and game assets belong to their respective owners
-            and are not affiliated with or endorsed by this project.
+              {P.discord && (
+                <a href={P.discord} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:underline" style={{ color: '#5865F2' }}>
+                  <MessageCircle className="w-3.5 h-3.5" /> Discord
+                </a>
+              )}
+              <a href="https://github.com/macabeus/mizuchi" target="_blank" rel="noreferrer" className="text-aero-muted hover:text-aero-text hover:underline">
+                inspired by Mizuchi Atlas
+              </a>
+            </div>
+            <div className="text-[10px] text-aero-muted leading-relaxed max-w-[680px] mx-auto">
+              Chaos Viewer &copy; {new Date().getFullYear()} <a href={AUTHOR_URL} target="_blank" rel="noreferrer" className="underline hover:text-aero-text">{AUTHOR}</a>. Released under the MIT License.
+              Progress data generated from the {P.name || 'project'} tooling; no copyrighted ROM or extracted
+              assets are included or distributed. All trademarks and game assets belong to their respective owners
+              and are not affiliated with or endorsed by this project.
+            </div>
           </div>
         </footer>
       </div>
