@@ -399,8 +399,8 @@ function PopLogo() {
     }
     if (state !== 'idle') return
     setState('pop')
-    setTimeout(() => setState('inflate'), 330)
-    setTimeout(() => setState('idle'), 900)
+    setTimeout(() => setState('inflate'), 120)
+    setTimeout(() => setState('idle'), 200)
   }
   return (
     <button onClick={popIt} className={`w-11 h-11 relative cursor-pointer ${state === 'idle' ? 'logo-bob' : state === 'pop' ? 'logo-pop' : 'logo-inflate'}`} aria-label="pop the bubble" title="pop me">
@@ -996,7 +996,13 @@ function App() {
             <div className="flex items-center gap-3">
               <PopLogo />
               <div>
-                <div className="text-3xl font-semibold tracking-[-1.5px]">{isHal ? 'Opie-9000' : 'Chaos Viewer'}</div>
+                {isHal ? (
+                  <div className="text-3xl font-bold" style={{ fontFamily: "'Eurostile', 'Bank Gothic', 'Arial Black', sans-serif", letterSpacing: '0.14em', color: 'var(--aero-primary)', textShadow: '0 0 14px rgb(255 47 36 / 0.55)' }}>
+                    OPIE-<span style={{ color: 'transparent', WebkitTextStroke: '1.6px var(--aero-primary)' }}>9000</span>
+                  </div>
+                ) : (
+                  <div className="text-3xl font-semibold tracking-[-1.5px]">Chaos Viewer</div>
+                )}
                 <div className="text-aero-muted text-sm -mt-1">{isHal ? 'I am completely operational, and all my circuits are functioning perfectly' : 'Bring order to the chaos'}</div>
               </div>
             </div>
