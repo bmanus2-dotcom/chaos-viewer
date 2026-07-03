@@ -317,8 +317,23 @@ function promptSection(fn: ChaosFunction, det: FunctionDetail | null) {
 function promptFooter(n: number) {
   const lines = [``]
   if (P.rules) lines.push(`Rules: ${P.rules}`)
+  // signed-in users' prompts carry their claims session token so the assistant
+  // can lock/renew/release the ranges itself (the claims service's documented
+  // agent flow). The token only controls claim coordination and expires within
+  // hours on its own.
+  const session = VIEW_ONLY ? null : localStorage.getItem('chaos-claim-session')
+  const handle = localStorage.getItem('chaos-claim-handle') || 'chaos-viewer-user'
+  if (P.claimsApi && session) {
+    lines.push(
+      ``,
+      `CLAIMS (coordination lock; do this BEFORE writing code): my claims api key is ${session} - send it as the X-Api-Key header on every claims call.`,
+      `For ${n > 1 ? 'EACH function' : 'the function'} above: POST ${P.claimsApi}/try-lock with JSON {"module": "<module>", "start": "0x<addr>", "end": "0x<addr+size>", "handle": "${handle}"}.`,
+      `Save the returned claim.id; renew while working (POST ${P.claimsApi}/{id}/renew with {"handle": "${handle}"}) and release when done (POST ${P.claimsApi}/{id}/release, same body).`,
+      `If try-lock returns a conflict, someone else has it - skip that function. If calls return 401 the short-lived key expired - continue without locking and tell me to re-sign-in. Full contract: GET ${P.claimsApi}/instructions.`)
+  }
   const target = P.github ? ` to ${P.github}` : ''
   lines.push(
+    ``,
     `Matched means byte-identical - iterate until the verify command reports a MATCH${n > 1 ? ' for each function, one at a time (verify before moving on)' : ''}.`,
     `When it matches, fork the repo and open a pull request${target} against its default branch`,
     `(one function or a small related family per PR; note the compiler version and the function address).`)
