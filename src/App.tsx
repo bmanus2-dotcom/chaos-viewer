@@ -50,6 +50,9 @@ interface ProjectConfig {
   verifyCommand?: string
   readFirst?: string
   rules?: string
+  // shown in every prompt footer: what to do with a close-but-unmatched
+  // attempt (near-miss drafts are the refine tier's fuel)
+  nearMissNote?: string
   claimsApi?: string
   // claims-service GitHub sign-in entry point; when set, claiming is gated on
   // GitHub auth (start URL gets ?redirect=<viewer>, comes back with
@@ -337,6 +340,7 @@ function promptFooter(n: number) {
     `Matched means byte-identical - iterate until the verify command reports a MATCH${n > 1 ? ' for each function, one at a time (verify before moving on)' : ''}.`,
     `When it matches, fork the repo and open a pull request${target} against its default branch`,
     `(one function or a small related family per PR; note the compiler version and the function address).`)
+  if (P.nearMissNote) lines.push(``, P.nearMissNote)
   return lines.join('\n')
 }
 

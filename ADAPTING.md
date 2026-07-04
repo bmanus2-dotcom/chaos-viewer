@@ -26,6 +26,8 @@ your project and everything else works unchanged.
   "verifyCommand": "python tools/verify.py --func {name} --addr 0x{addrHex} --size 0x{sizeHex}",
   "readFirst": "docs your contributors should read before writing code",
   "rules": "legal/purity rules line",
+  "nearMissNote": "what to do with a close-but-unmatched attempt", // omit to hide
+
   "claimsApi": "/api/claims",             // omit BOTH to hide the lock UI entirely
   "claimsProxyTarget": "https://your-claims-service"
 }
