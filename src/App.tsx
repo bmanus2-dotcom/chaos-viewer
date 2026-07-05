@@ -53,6 +53,10 @@ interface ProjectConfig {
   // shown in every prompt footer: what to do with a close-but-unmatched
   // attempt (near-miss drafts are the refine tier's fuel)
   nearMissNote?: string
+  // live data endpoint (the project's published chaos-db.json). When set, a
+  // hosted build fetches this on load instead of showing its baked-in snapshot,
+  // so the deployed page never goes stale as long as CI keeps the file fresh.
+  dataUrl?: string
   claimsApi?: string
   // claims-service GitHub sign-in entry point; when set, claiming is gated on
   // GitHub auth (start URL gets ?redirect=<viewer>, comes back with
@@ -92,6 +96,10 @@ const LINK_DISCORD = _param('discord') ? decodeURIComponent(_param('discord')!) 
 // makes the hosted viewer work for ANY project: point it at that project's data file.
 const DATA_URL_INIT = _param('data') ? decodeURIComponent(_param('data')!)
   : (() => { try { return JSON.parse(localStorage.getItem('chaos-project') || '{}').dataUrl || null } catch { return null } })()
+  // final fallback: the project's own published data endpoint, baked in at build
+  // time. This is what stops a hosted single-file build from freezing on its
+  // snapshot -- it live-fetches current data on every load.
+  || ((bundledDb as ChaosDb).project?.dataUrl ?? null)
 const HAS_LINK = !!(LINK_REPO || DATA_URL_INIT)
 
 const urlProject: Partial<ProjectConfig> = {}
