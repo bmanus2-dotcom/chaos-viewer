@@ -91,6 +91,7 @@ const _url = new URL(window.location.href)
 function _param(k: string) { return _url.searchParams.get(k) || _url.hash.match(new RegExp(`[#&]${k}=([^&]+)`))?.[1] }
 function _repoName(gh?: string | null) { return gh ? gh.replace(/\/+$/, '').split('/').slice(-1)[0] : undefined }
 const LINK_REPO = _param('repo') ? decodeURIComponent(_param('repo')!) : null
+const LINK_BRANCH = _param('branch') ? decodeURIComponent(_param('branch')!) : null
 const LINK_DISCORD = _param('discord') ? decodeURIComponent(_param('discord')!) : null
 // URL to a project's published chaos-db.json (its own generated data). This is what
 // makes the hosted viewer work for ANY project: point it at that project's data file.
@@ -125,17 +126,25 @@ function shareLink() {
   const q = new URLSearchParams()
   if (DATA_URL_INIT) q.set('data', DATA_URL_INIT)
   if (P.github) q.set('repo', P.github)
+  if (LINK_BRANCH && !DATA_URL_INIT) q.set('branch', LINK_BRANCH)
   if (P.discord && !DATA_URL_INIT) q.set('discord', P.discord)
   return `${base}?${q.toString()}`
 }
 
 // Probe a repo for a published Chaos Viewer data file. CORS-friendly raw.* URLs
 // first, then GitHub Pages. Returns the working URL or null.
-async function discoverData(github: string): Promise<string | null> {
+async function discoverData(github: string, branch?: string): Promise<string | null> {
   const m = github.match(/github\.com\/([^/]+)\/([^/]+?)(?:\.git)?\/?$/)
   if (!m) return null
   const [, owner, name] = m
+  const b = branch?.trim().replace(/^\/+|\/+$/g, '')
   const cands = [
+    // an explicit branch wins: point the viewer at any branch (e.g. a work
+    // branch) so the data never has to touch the project's default branch
+    ...(b ? [
+      `https://raw.githubusercontent.com/${owner}/${name}/${b}/chaos-db.json`,
+      `https://raw.githubusercontent.com/${owner}/${name}/${b}/data/chaos-db.json`,
+    ] : []),
     // dedicated data branch first: keeps the (large) atlas data out of the
     // project's main history, and raw.githubusercontent is CORS-open
     `https://raw.githubusercontent.com/${owner}/${name}/chaos-data/chaos-db.json`,
@@ -486,14 +495,25 @@ interface SetupModalProps {
   signedIn: boolean
   onSignIn: () => void
   onSignOut: () => void
+  onLoadLocal: (db: ChaosDb) => void
 }
 
-function SetupModal({ open, onClose, contrib, setContrib, canDismiss, claimHandle, signedIn, onSignIn, onSignOut }: SetupModalProps) {
+function SetupModal({ open, onClose, contrib, setContrib, canDismiss, claimHandle, signedIn, onSignIn, onSignOut, onLoadLocal }: SetupModalProps) {
   const [url, setUrl] = useState(P.github ?? '')
+  const [branch, setBranch] = useState(LINK_BRANCH ?? '')
   const [advanced, setAdvanced] = useState('')
   const [err, setErr] = useState('')
   const [checking, setChecking] = useState(false)
   if (!open) return null
+  // load a chaos-db.json straight off disk: no repo, no network, no npm. For
+  // contributors on slow/limited bandwidth who already have the file locally.
+  async function loadLocal(file: File) {
+    try {
+      const j = JSON.parse(await file.text())
+      if (!j || !j.stats || !Array.isArray(j.functions)) { setErr('That file is not a chaos-db.json'); return }
+      onLoadLocal(j as ChaosDb)
+    } catch { setErr('Could not read that file as JSON') }
+  }
   async function save() {
     const gh = url.trim().replace(/\/+$/, '')
     // Nothing changed (or nothing entered while a project is already set up):
@@ -512,7 +532,7 @@ function SetupModal({ open, onClose, contrib, setContrib, canDismiss, claimHandl
     setErr(''); setChecking(true)
     // an explicit dataUrl in advanced config is trusted; otherwise find it in the repo
     let dataUrl = extra.dataUrl
-    if (!dataUrl) dataUrl = (await discoverData(gh)) || undefined
+    if (!dataUrl) dataUrl = (await discoverData(gh, branch)) || undefined
     if (!dataUrl) {
       setChecking(false)
       setErr("No Chaos Viewer data found in this repo. The project owner must generate chaos-db.json "
@@ -541,6 +561,21 @@ function SetupModal({ open, onClose, contrib, setContrib, canDismiss, claimHandl
           className="w-full glass px-3 py-2 text-sm outline-none placeholder:text-aero-muted/60"
           autoFocus
         />
+        <input
+          value={branch}
+          onChange={e => { setBranch(e.target.value); setErr('') }}
+          placeholder="branch (optional, e.g. chaos-data) - keeps data off your default branch"
+          className="w-full glass px-3 py-2 text-sm outline-none placeholder:text-aero-muted/60"
+        />
+        <div className="text-xs text-aero-muted">
+          or{' '}
+          <label className="text-aero-primary hover:underline cursor-pointer">
+            load a local chaos-db.json
+            <input type="file" accept=".json,application/json" className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) loadLocal(f) }} />
+          </label>
+          {' '}(no repo or download needed)
+        </div>
         {EXAMPLES.length > 0 && (
           <div className="text-xs text-aero-muted">
             featured example:{' '}
@@ -654,7 +689,7 @@ function App() {
     if (dataUrl || HAS_BUNDLED_DATA || !P.github) return
     let cancelled = false
     setDataLoading(true)
-    discoverData(P.github).then(found => {
+    discoverData(P.github, LINK_BRANCH ?? undefined).then(found => {
       if (cancelled) return
       if (found) setDataUrl(found)
       else { setDataLoading(false); setSetupOpen(true) }
@@ -1079,7 +1114,8 @@ function App() {
         </div>
       )}
       <SetupModal open={setupOpen || !hasUsableData} onClose={() => setSetupOpen(false)} contrib={contribBubbles} setContrib={setContribBubbles} canDismiss={hasUsableData}
-        claimHandle={claimHandle} signedIn={!!claimSession} onSignIn={signInWithGitHub} onSignOut={signOut} />
+        claimHandle={claimHandle} signedIn={!!claimSession} onSignIn={signInWithGitHub} onSignOut={signOut}
+        onLoadLocal={d => { setDataUrl(null); setDb(d); setSetupOpen(false) }} />
 
       <div className="relative z-10 w-full px-3 sm:px-4 py-4 select-none">
         <header className="mb-4 flex flex-col lg:flex-row gap-3 lg:justify-between items-start select-none">
