@@ -19,7 +19,7 @@ jobs:
         with:
           ref: example-data
       - name: Pull latest sm64ds data
-        run: curl -fsSL "https://raw.githubusercontent.com/bmanus2-dotcom/sm64ds-decomp/chaos-data/chaos-db.json?t=$(date +%s)" -o sm64ds/chaos-db.json
+        run: curl -fsSL "https://raw.githubusercontent.com/tangosdev/sm64ds-decomp/chaos-data/chaos-db.json?t=$(date +%s)" -o sm64ds/chaos-db.json
       - name: Push if changed
         run: |
           if git diff --quiet; then echo "in sync"; exit 0; fi

@@ -9,7 +9,7 @@ from two things you provide.
    chunks, produced by ANY script that emits the schema below
 
 The included `scripts/generate-chaos-db.py` is the reference generator for
-[sm64ds-decomp](https://github.com/bmanus2-dotcom/sm64ds-decomp); write your own for
+[sm64ds-decomp](https://github.com/tangosdev/sm64ds-decomp); write your own for
 your project and everything else works unchanged.
 
 ## 1. project.config.json

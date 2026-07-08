@@ -4,12 +4,12 @@ An interactive progress atlas and contributor funnel for matching-decompilation 
 It shows every function in the game on one screen, ranks what is worth working on next,
 and builds a ready-to-paste AI prompt for any of them.
 
-**Live:** https://bmanus2-dotcom.github.io/chaos-viewer/
-**View-only mirror (no sign-in, no claiming):** https://bmanus2-dotcom.github.io/chaos-viewer/public/
+**Live:** https://tangosdev.github.io/chaos-viewer/
+**View-only mirror (no sign-in, no claiming):** https://tangosdev.github.io/chaos-viewer/public/
 
 ## Why I made this
 
-I run [sm64ds-decomp](https://github.com/bmanus2-dotcom/sm64ds-decomp), a from-scratch
+I run [sm64ds-decomp](https://github.com/tangosdev/sm64ds-decomp), a from-scratch
 matching decompilation of Super Mario 64 DS. A matching decomp is thousands of small,
 verifiable tasks: pick a function, write C, compile it with the original compiler, and
 check it against the ROM byte for byte. The hard part is not the individual functions, it is the
@@ -106,7 +106,7 @@ every contributor's hit rate, hardened the matching workflow, and reported and h
 is permanently visible. Thank you, Andrew.
 
 Inspired by [Mizuchi's Decomp Atlas](https://github.com/macabeus/mizuchi). Built for
-[sm64ds-decomp](https://github.com/bmanus2-dotcom/sm64ds-decomp) and released under the
+[sm64ds-decomp](https://github.com/tangosdev/sm64ds-decomp) and released under the
 MIT License so any decomp project can use it.
 
 No copyrighted ROM, binaries, or game assets are included or distributed. Unmatched
