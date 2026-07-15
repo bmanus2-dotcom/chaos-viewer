@@ -1613,9 +1613,9 @@ function App() {
             </div>
             <div className="text-[11px] text-aero-muted">
               Special thanks to{' '}
-              <a href="https://github.com/lunavyqo" target="_blank" rel="noreferrer" className="text-aero-muted hover:text-aero-text hover:underline">Luna</a>
+              <a href="https://github.com/lunavyqo" target="_blank" rel="noreferrer" className="text-aero-primary underline hover:text-aero-text">Luna</a>
               {' '}and{' '}
-              <a href="https://github.com/andrewboudreau" target="_blank" rel="noreferrer" className="text-aero-muted hover:text-aero-text hover:underline">Andrew</a>
+              <a href="https://github.com/andrewboudreau" target="_blank" rel="noreferrer" className="text-aero-primary underline hover:text-aero-text">Andrew</a>
               {' '}for their contributions.
             </div>
             <div className="text-[10px] text-aero-muted leading-relaxed max-w-[680px] mx-auto">
